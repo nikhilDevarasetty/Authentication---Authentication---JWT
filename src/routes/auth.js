@@ -136,8 +136,10 @@ router.get("/me", verifyAuthToken, async (req, res) => {
   const authToken = req.header("auth-token");
   try {
     const verifyres = jwt.verify(authToken, process.env.TOKEN_SECRET);
-    User.findOne({ name: req.body.name })
-      .then((data) => res.send(data))
+    User.findOne({ email: req.body.email })
+      .then((data) => {
+        res.send(data);
+      })
       .catch((error) => res.sendStatus(500));
   } catch (error) {
     res.status(400).send({ message: error.message });
