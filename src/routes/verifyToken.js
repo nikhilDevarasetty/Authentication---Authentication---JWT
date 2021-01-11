@@ -1,18 +1,10 @@
 const jwt = require("jsonwebtoken");
 
 function verifyAuthToken(req, res, next) {
-  // Your code goes here
-  //   const refreshToken = req.header("refresh-token");
-  //   if (refreshToken) {
-  //     const verifyres = jwt.verify(
-  //       refreshToken,
-  //       process.env.REFRESH_TOKEN_SECRET
-  //     );
-  //     res.send(verifyres);
-  //   } else {
-  //     res.status(401).send({ message: "Access denied" });
-  //   }
-  //   console.log(req.header);
+  const authToken = req.header("auth-token");
+  if (!authToken) {
+    res.status(401).send({ message: "Access denied" });
+  }
   next();
 }
 

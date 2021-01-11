@@ -101,11 +101,39 @@ router.get("/newAuthToken", verifyRefreshToken, async (req, res) => {
 // logout
 router.delete("/logout", verifyRefreshToken, async (req, res) => {
   // your code goes
+  const refreshToken = req.header("refresh-token");
+  try {
+    const verifyres = jwt.verify(
+      refreshToken,
+      process.env.REFRESH_TOKEN_SECRET
+    );
+    RefreshToken.deleteOne({ token: refreshToken }).then((data) => {
+      res.set({
+        "auth-token": undefined,
+        "refresh-token": undefined,
+      });
+      res.send({
+        token_id: refreshToken,
+        message: "Successfully logged out",
+      });
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 });
 
 // get user details
 router.get("/me", verifyAuthToken, async (req, res) => {
   // your code goes
+  const authToken = req.header("auth-token");
+  try {
+    const verifyres = jwt.verify(authToken, process.env.TOKEN_SECRET);
+    User.findOne({ name: req.body.name })
+      .then((data) => res.send(data))
+      .catch((error) => res.sendStatus(500));
+  } catch (error) {
+    res.status(400).send({ message: error.message });
+  }
 });
 
 module.exports = router;
