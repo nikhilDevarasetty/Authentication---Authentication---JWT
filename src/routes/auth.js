@@ -48,7 +48,8 @@ router.post("/login", async (req, res) => {
           if (flag) {
             const authToken = jwt.sign(
               { data: "testing" },
-              process.env.TOKEN_SECRET
+              process.env.TOKEN_SECRET,
+              { expiresIn: "24h" }
             );
             const refreshToken = jwt.sign(
               { data: "testing" },
@@ -59,11 +60,12 @@ router.post("/login", async (req, res) => {
             const refreshTokenData = RefreshToken({
               token: refreshToken,
             });
-            refreshTokenData.save();
-            res.send({
-              "auth-token": authToken,
-              "refresh-token": refreshTokenData.token,
-              "refresh-token-id": refreshTokenData._id,
+            refreshTokenData.save().then((result) => {
+              res.send({
+                "auth-token": authToken,
+                "refresh-token": result.token,
+                "refresh-token-id": result._id,
+              });
             });
           } else {
             res.status(400).send({ message: "password is wrong" });
@@ -78,7 +80,22 @@ router.post("/login", async (req, res) => {
 
 // generate New Auth-Token
 router.get("/newAuthToken", verifyRefreshToken, async (req, res) => {
-  // your code goes
+  const refreshToken = req.header("refresh-token");
+  try {
+    const verifyres = jwt.verify(
+      refreshToken,
+      process.env.REFRESH_TOKEN_SECRET
+    );
+    const authToken = jwt.sign({ data: "testing" }, process.env.TOKEN_SECRET, {
+      expiresIn: "24h",
+    });
+    res.json({
+      "auth-token": authToken,
+      "refresh-token": req.header("refresh-token"),
+    });
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
 });
 
 // logout
