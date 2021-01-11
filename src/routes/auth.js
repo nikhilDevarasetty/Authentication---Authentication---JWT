@@ -136,7 +136,7 @@ router.get("/me", verifyAuthToken, async (req, res) => {
   const authToken = req.header("auth-token");
   try {
     const verifyres = jwt.verify(authToken, process.env.TOKEN_SECRET);
-    User.findOne({ email: req.body.email })
+    User.findOne({ email: req.header.email })
       .then((data) => {
         res.send(data);
       })
