@@ -55,7 +55,6 @@ router.post("/login", async (req, res) => {
               { data: "testing" },
               process.env.REFRESH_TOKEN_SECRET
             );
-            // console.log(authToken, refreshToken);
 
             const refreshTokenData = RefreshToken({
               token: refreshToken,
@@ -89,12 +88,12 @@ router.get("/newAuthToken", verifyRefreshToken, async (req, res) => {
     const authToken = jwt.sign({ data: "testing" }, process.env.TOKEN_SECRET, {
       expiresIn: "24h",
     });
-    res.json({
+    res.send({
       "auth-token": authToken,
       "refresh-token": req.header("refresh-token"),
     });
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    res.status(400).send({ message: error.message });
   }
 });
 
@@ -118,7 +117,7 @@ router.delete("/logout", verifyRefreshToken, async (req, res) => {
       });
     });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).send({ message: error.message });
   }
 });
 
