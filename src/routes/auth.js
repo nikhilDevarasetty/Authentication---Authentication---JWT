@@ -58,7 +58,6 @@ router.post("/login", async (req, res) => {
 
             const refreshTokenData = RefreshToken({
               token: refreshToken,
-              user_id: result[0]._id,
             });
             refreshTokenData.save().then((result) => {
               res.set({
@@ -137,10 +136,7 @@ router.get("/me", verifyAuthToken, async (req, res) => {
     const verifyres = jwt.verify(authToken, process.env.TOKEN_SECRET);
 
     try {
-      const tokenData = RefreshToken.findOne({
-        token: req.header("refresh-token"),
-      });
-      const userData = await User.findOne({ _id: tokenData.user_id });
+      const userData = await User.findOne({ email: req.body.email });
       if (userData) res.send(userData);
       else {
         res.status(429).json({ message: "Access Denied" });
