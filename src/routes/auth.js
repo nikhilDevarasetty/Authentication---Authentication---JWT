@@ -91,7 +91,7 @@ router.get("/newAuthToken", verifyRefreshToken, async (req, res) => {
       process.env.REFRESH_TOKEN_SECRET
     );
     const authToken = jwt.sign({ data: "testing" }, process.env.TOKEN_SECRET, {
-      expiresIn: "24h",
+      expiresIn: "1day",
     });
     res.set({
       "auth-token": authToken,
