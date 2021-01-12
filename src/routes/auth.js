@@ -91,7 +91,7 @@ router.get("/newAuthToken", verifyRefreshToken, async (req, res) => {
       process.env.REFRESH_TOKEN_SECRET
     );
     const authToken = jwt.sign({ data: "testing" }, process.env.TOKEN_SECRET, {
-      expiresIn: "1day",
+      expiresIn: "24h",
     });
     res.set({
       "auth-token": authToken,
@@ -134,11 +134,16 @@ router.get("/me", verifyAuthToken, async (req, res) => {
   const authToken = req.header("auth-token");
   try {
     const verifyres = jwt.verify(authToken, process.env.TOKEN_SECRET);
-    User.findOne({ email: req.header.email })
-      .then((data) => {
-        res.send(data);
-      })
-      .catch((error) => res.sendStatus(500));
+
+    try {
+      const userData = await User.findOne({ email: req.body.email });
+      if (userData) res.send(userData);
+      else {
+        res.status(429).json({ message: "Access Denied" });
+      }
+    } catch (error) {
+      res.sendStatus(500);
+    }
   } catch (error) {
     res.status(400).send({ message: error.message });
   }
