@@ -115,15 +115,16 @@ router.delete("/logout", verifyRefreshToken, async (req, res) => {
       refreshToken,
       process.env.REFRESH_TOKEN_SECRET
     );
-    RefreshToken.deleteOne({ token: refreshToken }).then((data) => {
-      res.set({
-        "auth-token": undefined,
-        "refresh-token": undefined,
-      });
-      res.send({
-        token_id: refreshToken,
-        message: "Successfully logged out",
-      });
+    const readData = await RefreshToken.findOne({ token: refreshToken });
+    console.log(readData);
+    const deleteData = await RefreshToken.deleteOne({ token: refreshToken });
+    res.set({
+      "auth-token": undefined,
+      "refresh-token": undefined,
+    });
+    res.send({
+      token_id: readData._id,
+      message: "Successfully logged out",
     });
   } catch (error) {
     res.status(500).send({ message: error.message });
