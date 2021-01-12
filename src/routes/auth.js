@@ -136,7 +136,7 @@ router.get("/me", verifyAuthToken, async (req, res) => {
     const verifyres = jwt.verify(authToken, process.env.TOKEN_SECRET);
 
     try {
-      const userData = await User.findOne({ email: req.body.email });
+      const userData = await User.findOne({ email: req.header.email });
       if (userData) res.send(userData);
       else {
         res.status(429).json({ message: "Access Denied" });
