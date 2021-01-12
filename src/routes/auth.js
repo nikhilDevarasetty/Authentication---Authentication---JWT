@@ -118,10 +118,7 @@ router.delete("/logout", verifyRefreshToken, async (req, res) => {
     const readData = await RefreshToken.findOne({ token: refreshToken });
     console.log(readData);
     const deleteData = await RefreshToken.deleteOne({ token: refreshToken });
-    res.set({
-      "auth-token": undefined,
-      "refresh-token": undefined,
-    });
+
     res.send({
       token_id: readData._id,
       message: "Successfully logged out",
