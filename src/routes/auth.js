@@ -47,9 +47,9 @@ router.post("/login", async (req, res) => {
           const flag = bcrypt.compareSync(data.password, user.password);
           if (flag) {
             const authToken = jwt.sign(
-              { data: "testing" },
+              { id: user._id },
               process.env.TOKEN_SECRET,
-              { expiresIn: "24h" }
+              { expiresIn: 24 * 60 * 60 + 10 }
             );
             const refreshToken = jwt.sign(
               { data: "testing" },
@@ -90,11 +90,10 @@ router.get("/newAuthToken", verifyRefreshToken, async (req, res) => {
       refreshToken,
       process.env.REFRESH_TOKEN_SECRET
     );
-    const authToken = jwt.sign({ data: "testing" }, process.env.TOKEN_SECRET);
-    // console.log(
-    //   new Date().getTime(),
-    //   jwt.verify(authToken, process.env.TOKEN_SECRET)
-    // );
+    const authToken = jwt.sign({ id: user._id }, process.env.TOKEN_SECRET, {
+      expiresIn: 24 * 60 * 60 + 10,
+    });
+
     res.set({
       "auth-token": authToken,
       "refresh-token": req.header("refresh-token"),
@@ -138,7 +137,7 @@ router.get("/me", verifyAuthToken, async (req, res) => {
     const verifyres = jwt.verify(authToken, process.env.TOKEN_SECRET);
 
     try {
-      const userData = await User.findOne({ email: req.body.email });
+      const userData = await User.findOne({ _id: verifyres.id });
       if (userData) res.send(userData);
       else {
         res.status(429).json({ message: "Access Denied" });
