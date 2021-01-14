@@ -49,7 +49,7 @@ router.post("/login", async (req, res) => {
             const authToken = jwt.sign(
               { id: user._id },
               process.env.TOKEN_SECRET,
-              { expiresIn: 24 * 60 * 60 + 10 }
+              { expiresIn: "24h" }
             );
             const refreshToken = jwt.sign(
               { data: "testing" },
