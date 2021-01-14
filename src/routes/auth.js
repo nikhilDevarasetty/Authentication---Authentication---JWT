@@ -52,7 +52,7 @@ router.post("/login", async (req, res) => {
               { expiresIn: "24h" }
             );
             const refreshToken = jwt.sign(
-              { data: "testing" },
+              { id: user._id },
               process.env.REFRESH_TOKEN_SECRET
             );
 
@@ -90,7 +90,7 @@ router.get("/newAuthToken", verifyRefreshToken, async (req, res) => {
       refreshToken,
       process.env.REFRESH_TOKEN_SECRET
     );
-    const authToken = jwt.sign({ id: user._id }, process.env.TOKEN_SECRET, {
+    const authToken = jwt.sign({ id: verifyres.id }, process.env.TOKEN_SECRET, {
       expiresIn: 24 * 60 * 60 + 10,
     });
 
