@@ -95,11 +95,11 @@ router.get("/newAuthToken", verifyRefreshToken, async (req, res) => {
     });
 
     res.set({
-      "new-Auth-token": authToken,
+      "auth-token": authToken,
       "refresh-token": req.header("refresh-token"),
     });
     res.send({
-      "new-Auth-token": authToken,
+      "auth-token": authToken,
       "refresh-token": req.header("refresh-token"),
     });
   } catch (error) {
